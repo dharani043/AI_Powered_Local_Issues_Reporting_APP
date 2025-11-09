@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Field Workers</title>
+</head>
+<body>
+    <h1>Create Field Workers</h1>
+    <button onclick="createWorkers()">Create Field Workers</button>
+    <div id="result"></div>
+
+    <script>
+        async function createWorkers() {
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/create-field-workers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                
+                if (data.created > 0) {
+                    alert('Field workers created successfully! You can now login with:\nEmail: worker@chennai.gov.in\nPassword: worker123');
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
