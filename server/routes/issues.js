@@ -292,8 +292,6 @@ const path = require('path');
 const fs = require('fs');
 const { Issue, Feedback, User } = require('../lib/database');
 const { auth, adminAuth } = require('../middleware/auth');
-const imageClassifier = require('../lib/imageClassifier');
-const departmentRouter = require('../lib/departmentRouter');
 
 const router = express.Router();
 
