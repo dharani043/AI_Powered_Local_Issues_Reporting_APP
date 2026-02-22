@@ -62,28 +62,42 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password, loginType, municipalityId, pincode } = req.body;
+    console.log('Login attempt:', { email, loginType, municipalityId, pincode });
 
     // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
+      console.log('User not found:', email);
       return res.status(400).json({ error: 'Invalid credentials' });
     }
+
+    console.log('User found:', { email: user.email, role: user.role, municipalityId: user.municipalityId });
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ error: 'password incorrect' });
+      console.log('Password mismatch for:', email);
+      return res.status(400).json({ error: 'Invalid credentials' });
     }
 
-    // Additional validation for corporation admin
-    if (loginType === 'corporation_admin') {
-      if (user.role !== 'corporation_admin') {
-        return res.status(400).json({ error: 'Not authorized as corporation admin' });
+    // Additional validation for corporation/municipality admin
+    if (loginType === 'corporation_admin' || loginType === 'municipality_admin') {
+      if (user.role !== 'corporation_admin' && user.role !== 'municipality_admin') {
+        console.log('Role mismatch. User role:', user.role);
+        return res.status(400).json({ error: 'Not authorized as admin' });
       }
-      if (user.municipalityId !== municipalityId || user.pincode !== pincode) {
-        return res.status(400).json({ error: 'Invalid corporation credentials' });
+      if (municipalityId && pincode) {
+        if (user.municipalityId !== municipalityId || user.pincode !== pincode) {
+          console.log('Municipality details mismatch:', { 
+            provided: { municipalityId, pincode },
+            stored: { municipalityId: user.municipalityId, pincode: user.pincode }
+          });
+          return res.status(400).json({ error: 'Invalid municipality details' });
+        }
       }
     }
+    
+    console.log('Login successful for:', email);
     
     // Generate JWT
     const token = jwt.sign(
@@ -98,7 +112,7 @@ router.post('/login', async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        role: user.role === 'municipality_admin' ? 'corporation_admin' : user.role,
         municipalityId: user.municipalityId,
         municipalityName: user.municipalityName,
         pincode: user.pincode

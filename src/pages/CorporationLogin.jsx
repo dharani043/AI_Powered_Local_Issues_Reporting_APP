@@ -148,13 +148,20 @@ export function CorporationLogin({ onBack }) {
           </button>
         </form>
 
+        {/* Login Instructions */}
         <div className="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
-          <p className="text-sm text-indigo-800 dark:text-indigo-300 font-medium mb-2">Demo Credentials:</p>
-          <div className="text-xs text-indigo-700 dark:text-indigo-400 space-y-1">
-            <p>Email: admin@chennai.gov.in</p>
-            <p>Municipality ID: CHN001</p>
-            <p>Pincode: 600001</p>
-            <p>Password: chennai123</p>
+          <h3 className="text-sm font-semibold text-indigo-800 dark:text-indigo-300 mb-2">🏢 Corporation Admin Access:</h3>
+          <div className="text-xs text-indigo-700 dark:text-indigo-400 space-y-2">
+            <div>
+              <p><strong>Sample Credentials:</strong></p>
+              <p>• Chennai: admin@chennai.gov.in / CHN001 / 600001 / chennai123</p>
+              <p>• Coimbatore: admin@coimbatore.gov.in / CBE001 / 641001 / coimbatore123</p>
+              <p>• Madurai: admin@madurai.gov.in / MDU001 / 625001 / madurai123</p>
+            </div>
+            <div>
+              <p><strong>Features:</strong> Manage area issues, assign field workers, view analytics</p>
+              <p><strong>Access:</strong> Only issues from your municipality</p>
+            </div>
           </div>
         </div>
       </div>

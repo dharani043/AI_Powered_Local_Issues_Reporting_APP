@@ -103,14 +103,21 @@ export function FieldWorkerLogin({ onBack }) {
           </button>
         </form>
 
+        {/* Login Instructions */}
         <div className="mt-6 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-          <p className="text-sm text-orange-800 dark:text-orange-300 font-medium mb-2">Demo Credentials:</p>
-          <div className="text-xs text-orange-700 dark:text-orange-400 space-y-1">
-            <p>Email: worker@chennai.gov.in</p>
-            <p>Password: worker123</p>
-            <p className="mt-2 text-orange-600 dark:text-orange-300">
-              Other workers: electrician@chennai.gov.in, roads@chennai.gov.in
-            </p>
+          <h3 className="text-sm font-semibold text-orange-800 dark:text-orange-300 mb-2">🔧 Field Worker Access:</h3>
+          <div className="text-xs text-orange-700 dark:text-orange-400 space-y-2">
+            <div>
+              <p><strong>Sample Credentials:</strong></p>
+              <p>• Plumber: ravi.worker@chennai.gov.in / worker123</p>
+              <p>• Electrician: suresh.electrician@chennai.gov.in / worker123</p>
+              <p>• Roads: murugan.roads@chennai.gov.in / worker123</p>
+              <p>• Sanitation: karthik.sanitation@chennai.gov.in / worker123</p>
+            </div>
+            <div>
+              <p><strong>Features:</strong> View assigned issues, update status, upload resolution photos</p>
+              <p><strong>Specializations:</strong> Plumbing, Electrical, Road Maintenance, Sanitation</p>
+            </div>
           </div>
         </div>
       </div>

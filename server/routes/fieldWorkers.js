@@ -33,6 +33,10 @@ router.post('/', auth, async (req, res) => {
 
     const { name, email, phone, specialization, municipalityId } = req.body;
 
+    if (!name || !email) {
+      return res.status(400).json({ error: 'Name and email are required' });
+    }
+
     // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -111,8 +115,18 @@ router.patch('/change-password', auth, async (req, res) => {
 
     const { currentPassword, newPassword } = req.body;
 
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current and new password required' });
+    }
+
+    // Fetch user with password
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     // Verify current password
-    const isMatch = await bcrypt.compare(currentPassword, req.user.password);
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: 'Current password is incorrect' });
     }
@@ -139,6 +153,10 @@ router.patch('/update-location', auth, async (req, res) => {
     }
 
     const { latitude, longitude, accuracy } = req.body;
+
+    if (latitude === undefined || longitude === undefined) {
+      return res.status(400).json({ error: 'Latitude and longitude are required' });
+    }
 
     await User.findByIdAndUpdate(req.user._id, {
       currentLocation: {

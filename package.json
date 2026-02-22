@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "migrate-roles": "node migrate-roles.js",
-    "create-corporation-admins": "node create-corporation-admins.js"
+    "create-corporation-admins": "node create-corporation-admins.js",
+    "vercel-build": "npm run build"
   },
   "dependencies": {
     "axios": "^1.10.0",

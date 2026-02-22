@@ -3,8 +3,6 @@ const mongoose = require('mongoose');
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       dbName: 'civic_issues_db',
       serverSelectionTimeoutMS: 30000,
       connectTimeoutMS: 30000,

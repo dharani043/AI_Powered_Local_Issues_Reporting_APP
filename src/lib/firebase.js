@@ -2,13 +2,13 @@ import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDp3LDZTM9Zy3k-xqCgRmmEEZKj4HXQ7po",
-  authDomain: "pushnotification-civic.firebaseapp.com",
-  projectId: "pushnotification-civic",
-  storageBucket: "pushnotification-civic.firebasestorage.app",
-  messagingSenderId: "16419014370",
-  appId: "1:16419014370:web:cfe97d704c4650ef2240bb",
-  measurementId: "G-3GGK9TCKJB"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);
@@ -25,20 +25,51 @@ export const requestNotificationPermission = async () => {
     if (permission === 'granted') {
       const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
       const token = await getToken(messaging, {
-        vapidKey: 'BPcHM74GWFerL5X0OzWDYYW57KGofH__9YYiUu52uTRJyV1iRI_vkc1nE5ZCVUbe0iEY04CpVKgtSJ9dPiY3kMk',
+        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
         serviceWorkerRegistration: registration
       });
-      return token;
+      
+      if (token) {
+        console.log('FCM Token generated:', token);
+        // Store token in localStorage for API calls
+        localStorage.setItem('fcmToken', token);
+        return token;
+      } else {
+        console.log('No registration token available.');
+        return null;
+      }
+    } else {
+      console.log('Notification permission denied');
+      return null;
     }
   } catch (error) {
     console.error('Notification permission error:', error);
+    return null;
   }
-  return null;
 };
 
 export const onMessageListener = () =>
   new Promise((resolve) => {
     onMessage(messaging, (payload) => {
+      console.log('Message received in foreground:', payload);
       resolve(payload);
     });
   });
+
+export const sendTokenToServer = async (token) => {
+  try {
+    const userToken = localStorage.getItem('token');
+    if (!userToken) return;
+
+    await fetch('http://localhost:5000/api/user/fcm-token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userToken}`
+      },
+      body: JSON.stringify({ fcmToken: token })
+    });
+  } catch (error) {
+    console.error('Error sending FCM token to server:', error);
+  }
+};

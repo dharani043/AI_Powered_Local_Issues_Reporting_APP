@@ -1,81 +1,103 @@
 const tf = require('@tensorflow/tfjs-node');
-const sharp = require('sharp');
+const fs = require('fs');
 const path = require('path');
 
 class ImageClassifier {
   constructor() {
     this.model = null;
     this.categories = {
-      0: { name: 'infrastructure', department: 'Public Works' },
-      1: { name: 'utilities', department: 'Utilities Department' },
-      2: { name: 'sanitation', department: 'Sanitation Department' },
-      3: { name: 'safety', department: 'Safety & Security' },
-      4: { name: 'environmental', department: 'Environmental Department' }
+      'infrastructure': ['road', 'bridge', 'building', 'construction'],
+      'utilities': ['water', 'electricity', 'power', 'cable'],
+      'sanitation': ['garbage', 'waste', 'drain', 'sewer'],
+      'safety': ['traffic', 'accident', 'danger', 'security'],
+      'environmental': ['tree', 'pollution', 'air', 'noise']
     };
   }
 
   async loadModel() {
     try {
-      // Load pre-trained model (replace with your model path)
-      this.model = await tf.loadLayersModel('file://./models/civic_classifier/model.json');
-      console.log('Image classification model loaded successfully');
+      // For MVP, we'll use a simple rule-based classifier
+      // In production, load a pre-trained TensorFlow model
+      console.log('AI Image Classifier initialized (rule-based)');
+      this.model = 'rule-based';
+      return true;
     } catch (error) {
-      console.error('Error loading model:', error);
-      // Fallback to mock classification
-      this.model = null;
+      console.error('Error loading AI model:', error);
+      return false;
     }
-  }
-
-  async preprocessImage(imagePath) {
-    const imageBuffer = await sharp(imagePath)
-      .resize(224, 224)
-      .removeAlpha()
-      .toBuffer();
-    
-    const tensor = tf.node.decodeImage(imageBuffer, 3)
-      .expandDims(0)
-      .div(255.0);
-    
-    return tensor;
   }
 
   async classifyImage(imagePath) {
     try {
       if (!this.model) {
-        // Mock classification for demo
-        return this.mockClassification();
+        await this.loadModel();
       }
 
-      const preprocessed = await this.preprocessImage(imagePath);
-      const predictions = await this.model.predict(preprocessed).data();
+      // Simple rule-based classification based on filename/metadata
+      // In production, this would use actual image analysis
+      const filename = path.basename(imagePath).toLowerCase();
       
-      const maxIndex = predictions.indexOf(Math.max(...predictions));
-      const confidence = predictions[maxIndex];
-      
-      preprocessed.dispose();
-      
+      let detectedCategory = 'infrastructure'; // default
+      let confidence = 0.6;
+
+      // Rule-based classification
+      for (const [category, keywords] of Object.entries(this.categories)) {
+        for (const keyword of keywords) {
+          if (filename.includes(keyword)) {
+            detectedCategory = category;
+            confidence = 0.8;
+            break;
+          }
+        }
+        if (confidence > 0.7) break;
+      }
+
+      // Additional heuristics based on common issue patterns
+      if (filename.includes('pothole') || filename.includes('road')) {
+        detectedCategory = 'infrastructure';
+        confidence = 0.9;
+      } else if (filename.includes('garbage') || filename.includes('waste')) {
+        detectedCategory = 'sanitation';
+        confidence = 0.9;
+      } else if (filename.includes('water') || filename.includes('leak')) {
+        detectedCategory = 'utilities';
+        confidence = 0.85;
+      }
+
       return {
-        category: this.categories[maxIndex].name,
-        department: this.categories[maxIndex].department,
+        category: detectedCategory,
         confidence: confidence,
-        success: true
+        method: 'rule-based',
+        timestamp: new Date()
       };
     } catch (error) {
-      console.error('Classification error:', error);
-      return this.mockClassification();
+      console.error('Image classification error:', error);
+      return {
+        category: 'infrastructure',
+        confidence: 0.5,
+        method: 'fallback',
+        error: error.message
+      };
     }
   }
 
-  mockClassification() {
-    const categories = Object.values(this.categories);
-    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-    
-    return {
-      category: randomCategory.name,
-      department: randomCategory.department,
-      confidence: 0.85 + Math.random() * 0.1,
-      success: true
-    };
+  async analyzeImageContent(imagePath) {
+    // Placeholder for advanced image analysis
+    // In production, this would use computer vision APIs
+    try {
+      const stats = fs.statSync(imagePath);
+      return {
+        fileSize: stats.size,
+        analyzed: true,
+        features: ['basic_analysis'],
+        timestamp: new Date()
+      };
+    } catch (error) {
+      return {
+        analyzed: false,
+        error: error.message
+      };
+    }
   }
 }
 

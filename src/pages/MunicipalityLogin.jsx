@@ -103,14 +103,19 @@ export function MunicipalityLogin({ onBack }) {
           </button>
         </form>
 
+        {/* Login Instructions */}
         <div className="mt-6 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-          <p className="text-sm text-purple-800 dark:text-purple-300 font-medium mb-2">Demo Credentials:</p>
-          <div className="text-xs text-purple-700 dark:text-purple-400 space-y-1">
-            <p>Email: municipality@admin.gov.in</p>
-            <p>Password: admin123</p>
-            <p className="mt-2 text-purple-600 dark:text-purple-300">
-              Manage field workers and oversee corporations
-            </p>
+          <h3 className="text-sm font-semibold text-purple-800 dark:text-purple-300 mb-2">🏡 Municipality Admin Access:</h3>
+          <div className="text-xs text-purple-700 dark:text-purple-400 space-y-2">
+            <div>
+              <p><strong>Sample Credentials:</strong></p>
+              <p>• State Admin: state.admin@tn.gov.in / admin123</p>
+            </div>
+            <div>
+              <p><strong>Features:</strong> Multi-municipality oversight, create corporation admins, system-wide analytics</p>
+              <p><strong>Access:</strong> All issues across municipalities, user management, delegation</p>
+              <p><strong>Responsibilities:</strong> Oversee 21+ corporations, manage field workers, system configuration</p>
+            </div>
           </div>
         </div>
       </div>

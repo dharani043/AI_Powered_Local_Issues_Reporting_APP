@@ -115,8 +115,14 @@ export function CitizenLogin({ onBack, onSwitchToRegister }) {
           </button>
         </div>
 
-        <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-          <p>Demo: user@civic.com / User_123</p>
+        {/* Login Instructions */}
+        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+          <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-2">📋 How to Access:</h3>
+          <div className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+            <p><strong>New Users:</strong> Click "Sign up" to create account</p>
+            <p><strong>Demo Account:</strong> user@civic.com / User_123</p>
+            <p><strong>Features:</strong> Report issues, track status, provide feedback</p>
+          </div>
         </div>
       </div>
     </div>
