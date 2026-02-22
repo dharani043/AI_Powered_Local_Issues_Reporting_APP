@@ -110,7 +110,48 @@ app.get('/api/test/db', async (req, res) => {
   }
 });
 
-// Create municipality admin
+// Test registration endpoint
+app.post('/api/test/register', async (req, res) => {
+  try {
+    const bcrypt = require('bcryptjs');
+    const { name, email, password } = req.body;
+    
+    console.log('Test registration:', { name, email, password: password ? 'provided' : 'missing' });
+    
+    // Check if user exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+    
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    
+    // Create user
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role: 'user'
+    });
+    
+    await user.save();
+    
+    res.status(201).json({
+      message: 'User created successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error('Test registration error:', error);
+    res.status(500).json({ error: 'Registration failed', details: error.message });
+  }
+});
 app.get('/api/init/municipality-admin', async (req, res) => {
   try {
     const bcrypt = require('bcryptjs');
