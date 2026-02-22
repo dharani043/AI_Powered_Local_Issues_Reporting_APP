@@ -110,6 +110,16 @@ app.get('/api/test/db', async (req, res) => {
   }
 });
 
+// Debug: List all users
+app.get('/api/debug/users', async (req, res) => {
+  try {
+    const users = await User.find({}, 'name email role municipalityId').limit(20);
+    res.json({ users });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch users', details: error.message });
+  }
+});
+
 // Initialize database - GET routes for easy access
 app.get('/api/init/corporation-admins', async (req, res) => {
   try {
