@@ -52,7 +52,7 @@ setTimeout(async () => {
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'https://aipoweredlocalissuesreportingapp-production.up.railway.app', 'https://*.vercel.app'],
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
