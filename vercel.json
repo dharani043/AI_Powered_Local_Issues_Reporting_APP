@@ -1,15 +1,6 @@
 {
   "version": 2,
-  "functions": {
-    "server/server.js": {
-      "maxDuration": 10
-    }
-  },
   "builds": [
-    {
-      "src": "server/server.js",
-      "use": "@vercel/node"
-    },
     {
       "src": "package.json",
       "use": "@vercel/static-build",
@@ -19,14 +10,6 @@
     }
   ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/server/server.js"
-    },
-    {
-      "src": "/uploads/(.*)",
-      "dest": "/server/uploads/$1"
-    },
     {
       "src": "/(.*)",
       "dest": "/dist/$1"
