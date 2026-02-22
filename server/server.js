@@ -88,6 +88,76 @@ app.get('/api/auth/test', (req, res) => {
   res.json({ message: 'Auth routes are working' });
 });
 
+// Initialize database - GET routes for easy access
+app.get('/api/init/corporation-admins', async (req, res) => {
+  try {
+    const bcrypt = require('bcryptjs');
+    const corporationAdmins = [
+      { name: 'Chennai Corporation Admin', email: 'admin@chennai.gov.in', password: 'chennai123', municipalityId: 'CHN001', municipalityName: 'Chennai Corporation', pincode: '600001' },
+      { name: 'Coimbatore Admin', email: 'admin@coimbatore.gov.in', password: 'coimbatore123', municipalityId: 'CBE001', municipalityName: 'Coimbatore Corporation', pincode: '641001' },
+      { name: 'Madurai Admin', email: 'admin@madurai.gov.in', password: 'madurai123', municipalityId: 'MDU001', municipalityName: 'Madurai Corporation', pincode: '625001' }
+    ];
+
+    const created = [];
+    for (const admin of corporationAdmins) {
+      const existingAdmin = await User.findOne({ email: admin.email });
+      if (!existingAdmin) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(admin.password, salt);
+        const newAdmin = new User({
+          name: admin.name,
+          email: admin.email,
+          password: hashedPassword,
+          role: 'corporation_admin',
+          municipalityId: admin.municipalityId,
+          municipalityName: admin.municipalityName,
+          pincode: admin.pincode
+        });
+        await newAdmin.save();
+        created.push(admin.municipalityName);
+      }
+    }
+    res.json({ message: 'Corporation admins created', created });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create admins', details: error.message });
+  }
+});
+
+app.get('/api/init/field-workers', async (req, res) => {
+  try {
+    const bcrypt = require('bcryptjs');
+    const fieldWorkers = [
+      { name: 'Ravi Kumar', email: 'ravi.worker@chennai.gov.in', password: 'worker123', phone: '+91-9876543210', specialization: 'Plumbing', municipalityId: 'CHN001', municipalityName: 'Chennai Corporation' },
+      { name: 'Suresh Babu', email: 'suresh.electrician@chennai.gov.in', password: 'worker123', phone: '+91-9876543211', specialization: 'Electrical', municipalityId: 'CHN001', municipalityName: 'Chennai Corporation' }
+    ];
+
+    const created = [];
+    for (const worker of fieldWorkers) {
+      const existingWorker = await User.findOne({ email: worker.email });
+      if (!existingWorker) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(worker.password, salt);
+        const newWorker = new User({
+          name: worker.name,
+          email: worker.email,
+          password: hashedPassword,
+          role: 'field_worker',
+          phone: worker.phone,
+          specialization: worker.specialization,
+          municipalityId: worker.municipalityId,
+          municipalityName: worker.municipalityName,
+          isActive: true
+        });
+        await newWorker.save();
+        created.push(worker.name);
+      }
+    }
+    res.json({ message: 'Field workers created', created });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create workers', details: error.message });
+  }
+});
+
 // List all routes for debugging
 app.get('/api/debug/routes', (req, res) => {
   const routes = [];
