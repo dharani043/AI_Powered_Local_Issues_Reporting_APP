@@ -52,7 +52,7 @@ setTimeout(async () => {
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://aipoweredlocalissuesreportingapp-production.up.railway.app', 'https://*.vercel.app'],
+  origin: true,
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -81,6 +81,34 @@ console.log('- /api/field-workers');
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
+});
+
+// Debug route to check auth routes
+app.get('/api/auth/test', (req, res) => {
+  res.json({ message: 'Auth routes are working' });
+});
+
+// List all routes for debugging
+app.get('/api/debug/routes', (req, res) => {
+  const routes = [];
+  app._router.stack.forEach(middleware => {
+    if (middleware.route) {
+      routes.push({
+        path: middleware.route.path,
+        methods: Object.keys(middleware.route.methods)
+      });
+    } else if (middleware.name === 'router') {
+      middleware.handle.stack.forEach(handler => {
+        if (handler.route) {
+          routes.push({
+            path: handler.route.path,
+            methods: Object.keys(handler.route.methods)
+          });
+        }
+      });
+    }
+  });
+  res.json({ routes });
 });
 
 
