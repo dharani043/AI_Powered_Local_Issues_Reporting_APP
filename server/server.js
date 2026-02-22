@@ -83,9 +83,31 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
 });
 
-// Debug route to check auth routes
-app.get('/api/auth/test', (req, res) => {
-  res.json({ message: 'Auth routes are working' });
+// Test MongoDB connection
+app.get('/api/test/db', async (req, res) => {
+  try {
+    const mongoose = require('mongoose');
+    const connectionState = mongoose.connection.readyState;
+    const states = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
+    
+    if (connectionState === 1) {
+      const testDoc = await User.countDocuments();
+      res.json({ 
+        status: 'Database connected', 
+        state: states[connectionState],
+        userCount: testDoc,
+        mongoUri: process.env.MONGODB_URI ? 'Set' : 'Not set'
+      });
+    } else {
+      res.json({ 
+        status: 'Database not connected', 
+        state: states[connectionState],
+        mongoUri: process.env.MONGODB_URI ? 'Set' : 'Not set'
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Database test failed', details: error.message });
+  }
 });
 
 // Initialize database - GET routes for easy access
