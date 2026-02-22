@@ -26,15 +26,5 @@
       "src": "/(.*)",
       "dest": "/dist/$1"
     }
-  ],
-  "env": {
-    "MONGODB_URI": "@mongodb_uri",
-    "JWT_SECRET": "@jwt_secret",
-    "LOCATIONIQ_API_KEY": "@locationiq_api_key",
-    "FIREBASE_SERVER_KEY": "@firebase_server_key",
-    "EMAIL_HOST": "@email_host",
-    "EMAIL_PORT": "@email_port",
-    "EMAIL_USER": "@email_user",
-    "EMAIL_PASS": "@email_pass"
-  }
+  ]
 }
