@@ -110,11 +110,50 @@ app.get('/api/test/db', async (req, res) => {
   }
 });
 
-// Debug: List all users
+// Create municipality admin
+app.get('/api/init/municipality-admin', async (req, res) => {
+  try {
+    const bcrypt = require('bcryptjs');
+    const admin = {
+      name: 'Tamil Nadu State Admin',
+      email: 'state.admin@tn.gov.in',
+      password: 'admin123',
+      role: 'municipality_admin',
+      municipalityId: 'TN001',
+      municipalityName: 'Tamil Nadu State'
+    };
+
+    const existingAdmin = await User.findOne({ email: admin.email });
+    if (!existingAdmin) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(admin.password, salt);
+      const newAdmin = new User({
+        name: admin.name,
+        email: admin.email,
+        password: hashedPassword,
+        role: admin.role,
+        municipalityId: admin.municipalityId,
+        municipalityName: admin.municipalityName
+      });
+      await newAdmin.save();
+      res.json({ message: 'Municipality admin created', created: admin.name });
+    } else {
+      res.json({ message: 'Municipality admin already exists', name: admin.name });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create municipality admin', details: error.message });
+  }
+});
 app.get('/api/debug/users', async (req, res) => {
   try {
-    const users = await User.find({}, 'name email role municipalityId').limit(20);
-    res.json({ users });
+    const users = await User.find({}, 'name email role municipalityId').limit(50);
+    const fieldWorkers = await User.find({ role: 'field_worker' }, 'name email role');
+    res.json({ 
+      totalUsers: users.length,
+      users, 
+      fieldWorkers: fieldWorkers.length,
+      fieldWorkerList: fieldWorkers
+    });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch users', details: error.message });
   }
