@@ -81,6 +81,10 @@ console.log('- /api/email');
 console.log('- /api/field-workers');
 
 // Health check
+app.get('/', (req, res) => {
+  res.json({ status: 'Civic Issue Tracker API', version: '1.0.0' });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
 });
