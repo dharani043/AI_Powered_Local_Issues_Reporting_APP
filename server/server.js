@@ -52,7 +52,11 @@ setTimeout(async () => {
 
 // Middleware
 app.use(cors({
-  origin: ['https://ai-powered-local-issues-reporting-a.vercel.app', 'http://localhost:5173'],
+  origin: [
+    'https://ai-powered-local-issues-reporting-a.vercel.app',
+    'https://ai-powered-local-issues-reporting-o7o2akabk.vercel.app',
+    'http://localhost:5173'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
